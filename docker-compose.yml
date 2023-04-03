@@ -1,0 +1,13 @@
+# docker un --name api-solid-pg -e POSTGRES_USER=docker -e POSTGRES_PASSWORD=docker -e POSTGRES_DB=apisolid -p 5432:5432 -d postgres
+
+version: '3'
+
+services:
+  api-solid-pg:
+    image: postgres
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_USER=docker
+      - POSTGRES_PASSWORD=docker
+      - POSTGRES_DB=apisolid
