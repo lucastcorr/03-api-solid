@@ -2,29 +2,28 @@ import { describe, expect, it } from 'vitest'
 import { RegisterService } from './register'
 // import { PrismaUsersRepository } from '@/repositories/prisma/prisma-users-repository'
 import { compare } from 'bcryptjs'
+import { InMemoryUsersRepository } from '@/repositories/in-memory/in-memory-users-repository'
+import { UserAlreadyExistsError } from './errors/user-already-exists-error'
 
 describe('Register Service', () => {
-  it('Should hash user password upon registration', async () => {
-    // const prismaUsersRepository = new PrismaUsersRepository()
-    // const registerService = new RegisterService({ fakeRegisterServiceForTests })
+  it('Should be able to register', async () => {
+    const usersRepository = new InMemoryUsersRepository()
+    const registerService = new RegisterService(usersRepository)
 
-    const fakeRegisterServiceForTests = new RegisterService({
-      async findByEmail(email) {
-        return null
-      },
-
-      async create(data) {
-        return {
-          id: 'user-1',
-          name: data.name,
-          email: data.email,
-          password_hash: data.password_hash,
-          created_at: new Date(),
-        }
-      },
+    const { user } = await registerService.executeRegisterService({
+      name: 'Elliot Alderson',
+      email: 'ucancallmemrrobot2@example.com',
+      password: '123456',
     })
 
-    const { user } = await fakeRegisterServiceForTests.executeRegisterService({
+    expect(user).toBeDefined()
+  })
+
+  it('Should hash user password upon registration', async () => {
+    const usersRepository = new InMemoryUsersRepository()
+    const registerService = new RegisterService(usersRepository)
+
+    const { user } = await registerService.executeRegisterService({
       name: 'Elliot Alderson',
       email: 'ucancallmemrrobot2@example.com',
       password: '123456',
@@ -36,5 +35,26 @@ describe('Register Service', () => {
     )
 
     expect(isPasswordCorrectlyHashed).toBe(true)
+  })
+
+  it('Should not be able to register with same email twice', async () => {
+    const usersRepository = new InMemoryUsersRepository()
+    const registerService = new RegisterService(usersRepository)
+
+    const email = 'ucancallmemrrobot2@example.com'
+
+    await registerService.executeRegisterService({
+      name: 'Elliot Alderson',
+      email: 'ucancallmemrrobot2@example.com',
+      password: '123456',
+    })
+
+    expect(() =>
+      registerService.executeRegisterService({
+        name: 'Elliot Alderson',
+        email,
+        password: '123456',
+      }),
+    ).rejects.toBeInstanceOf(UserAlreadyExistsError)
   })
 })
