@@ -9,11 +9,6 @@ interface RegisterServiceRequest {
   password: string
 }
 
-/**
- * SOLID
- * D: Dependency Inversion Principle
- */
-
 interface RegisterServiceResponse {
   user: User
 }
