@@ -13,7 +13,7 @@ describe('Get user profile Service', () => {
     sut = new GetUserProfileService(usersRepository)
   })
 
-  it('Should be able to get user profile', async () => {
+  it('should be able to get user profile', async () => {
     const createdUser = await usersRepository.create({
       name: 'Fulaninho',
       email: 'fulaninho@gmail.com',
@@ -34,7 +34,7 @@ describe('Get user profile Service', () => {
       password_hash: await hash('123456', 6),
     })
 
-    expect(() =>
+    await expect(() =>
       sut.executeGetUserProfileService({
         userId: 'non-existing-id',
       }),
