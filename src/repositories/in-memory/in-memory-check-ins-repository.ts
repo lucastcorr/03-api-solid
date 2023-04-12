@@ -10,7 +10,7 @@ export class InMemoryCheckInsRepository implements CheckInsRepository {
     const startOfTheDay = dayjs(date).startOf('date')
     const endOfTheDay = dayjs(date).endOf('date')
 
-    // 2023-02-28T15:30:00 = with startOf('date') we get 2023-02-28T00:00:00
+    // 2023-01-20T15:30:00 = with startOf('date') we get 2023-01-20T00:00:00
 
     const checkInOnSameDate = this.items.find((checkIn) => {
       const checkInDate = dayjs(checkIn.created_at)
