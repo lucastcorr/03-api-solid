@@ -2,6 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { InMemoryCheckInsRepository } from '@/repositories/in-memory/in-memory-check-ins-repository'
 import { ValidadeCheckInService } from './validate-check-in'
 import { ResourceNotFoundError } from './errors/resource-not-found-error'
+import { LateCheckInValidationError } from './errors/late-check-in-validation-error'
 
 let checkInsRepository: InMemoryCheckInsRepository
 let sut: ValidadeCheckInService
@@ -47,14 +48,14 @@ describe('Validade check-in Service', () => {
       user_id: 'user-01',
     })
 
-    const twntyOneMinutesInMs = 1000 * 60 * 21
+    const twentyOneMinutesInMs = 1000 * 60 * 21
 
-    vi.advanceTimersByTime(twntyOneMinutesInMs)
+    vi.advanceTimersByTime(twentyOneMinutesInMs)
 
     await expect(() =>
       sut.executeValidadeCheckInService({
         checkInId: createdCheckIn.id,
       }),
-    ).rejects.toBeInstanceOf(Error)
+    ).rejects.toBeInstanceOf(LateCheckInValidationError)
   })
 })
